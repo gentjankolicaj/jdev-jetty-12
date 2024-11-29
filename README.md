@@ -5,7 +5,7 @@ java helper & util classes around jetty-12 for SDLC.
 ## How to use it ?
 
 This is not pushed to Maven central... yet. But still you can use it
-via [![](https://jitpack.io/v/gentjankolicaj/jdev-jetty-12.svg)](https://jitpack.io/#gentjankolicaj/jdev-primitive)
+via [![](https://jitpack.io/v/gentjankolicaj/jdev-jetty-12.svg)](https://jitpack.io/#gentjankolicaj/jdev-jetty-12)
 
 Add the jitpack repository to your maven repositories:
 
