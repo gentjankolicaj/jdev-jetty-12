@@ -1,0 +1,32 @@
+jettyServer:
+  dumpAfterStart: false
+  dumpBeforeStop: false
+  stopAtShutdown: true
+  stopTimeout: 10000 # in milliseconds
+  gzipEnabled: true
+  securedRedirect: true
+  threadPool:
+    poolName: jetty-pool
+    daemonThreads: true
+    minThreads: 4
+    maxThreads: 50
+    reservedThreads: 1
+    idleTimeout: 10000 # in milliseconds
+    stopTimeout: 10000 # in milliseconds
+  connectors:
+    - name: first-connector
+      host: 127.0.0.1
+      port: 8443
+      idleTimeout:
+        duration: 120
+        timeUnit: SECONDS
+      http:
+        version: "HTTP_2"
+        ssl:
+          keyStoreFile: ssl/keystore.p12  # Keystore file name in path
+          keyStorePassword: "1234567" # Keystore password
+          keyPassword: # password for specific key in keystore if anny.
+        outputBufferSize: 32768
+        requestHeaderSize: 8192
+        responseHeaderSize: 8192
+

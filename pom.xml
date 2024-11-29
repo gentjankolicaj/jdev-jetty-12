@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>io.jdev</groupId>
+	<artifactId>jdev-jetty-12</artifactId>
+	<version>1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<properties>
+		<java.version>17</java.version>
+		<jetty.version>12.0.15</jetty.version>
+		<lombok.version>1.18.34</lombok.version>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	</properties>
+
+	<repositories>
+		<repository>
+			<id>JitPack</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<type>pom</type>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-bom</artifactId>
+				<version>${jetty.version}</version>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<type>pom</type>
+				<groupId>org.eclipse.jetty.ee10</groupId>
+				<artifactId>jetty-ee10-bom</artifactId>
+				<version>${jetty.version}</version>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<!-- jetty 12 -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty.http2</groupId>
+			<artifactId>jetty-http2-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-alpn-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-alpn-conscrypt-server</artifactId>
+		</dependency>
+
+		<!-- jetty 12 + jakarta dependencies -->
+		<dependency>
+			<groupId>org.eclipse.jetty.ee10</groupId>
+			<artifactId>jetty-ee10-webapp</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty.ee10.websocket</groupId>
+			<artifactId>jetty-ee10-websocket-jakarta-server</artifactId>
+		</dependency>
+
+		<!-- jetty 12 websocket api -->
+		<dependency>
+			<groupId>org.eclipse.jetty.ee10.websocket</groupId>
+			<artifactId>jetty-ee10-websocket-jetty-server</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.jetty.websocket</groupId>
+			<artifactId>jetty-websocket-jetty-client</artifactId>
+		</dependency>
+
+		<!-- jdev dependencies -->
+		<dependency>
+			<groupId>com.github.gentjankolicaj</groupId>
+			<artifactId>jdev-jackson</artifactId>
+			<version>main-715465d8b9-1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.gentjankolicaj</groupId>
+			<artifactId>jdev-primitive</artifactId>
+			<version>main-2319784550-1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.gentjankolicaj</groupId>
+			<artifactId>jdev-test</artifactId>
+			<version>main-f4124c59ad-1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+					</annotationProcessorPaths>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
+				</configuration>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
