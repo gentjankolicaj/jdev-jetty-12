@@ -143,6 +143,12 @@ public final class JettyServerUtils {
     httpProperties.getResponseHeaderSize().ifPresent(httpConfig::setResponseHeaderSize);
     httpProperties.getSendServerVersion().ifPresent(httpConfig::setSendServerVersion);
     httpProperties.getSendDateHeader().ifPresent(httpConfig::setSendDateHeader);
+
+    //compliance
+    httpConfig.setHttpCompliance(httpProperties.getHttpCompliance());
+    httpConfig.setUriCompliance(httpProperties.getUriCompliance());
+    httpConfig.setRequestCookieCompliance(httpProperties.getRequestCookieCompliance());
+    httpConfig.setResponseCookieCompliance(httpProperties.getResponseCookieCompliance());
     return httpConfig;
   }
 
@@ -248,6 +254,11 @@ public final class JettyServerUtils {
     httpProperties.getResponseHeaderSize().ifPresent(httpConfig::setResponseHeaderSize);
     httpProperties.getSendServerVersion().ifPresent(httpConfig::setSendServerVersion);
     httpProperties.getSendDateHeader().ifPresent(httpConfig::setSendDateHeader);
+
+    httpConfig.setHttpCompliance(httpProperties.getHttpCompliance());
+    httpConfig.setUriCompliance(httpProperties.getUriCompliance());
+    httpConfig.setRequestCookieCompliance(httpProperties.getRequestCookieCompliance());
+    httpConfig.setResponseCookieCompliance(httpProperties.getResponseCookieCompliance());
     return httpConfig;
   }
 
