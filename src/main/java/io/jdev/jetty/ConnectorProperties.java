@@ -19,6 +19,6 @@ public class ConnectorProperties {
   protected String host;
   protected int port;
   protected TimeoutProperties idleTimeout;
-  protected Optional<HttpProperties> http = Optional.empty();
+  protected Optional<HttpConfigProperties> httpConfig = Optional.empty();
 
 }

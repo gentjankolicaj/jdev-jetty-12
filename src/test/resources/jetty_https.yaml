@@ -20,12 +20,13 @@ jettyServer:
       idleTimeout:
         duration: 120
         timeUnit: SECONDS
-      http:
+      httpConfig:
+        type: https
         version: "HTTP_2"
         ssl:
-          keyStoreFile: ssl/keystore.p12  # Keystore file name in path
+          keyStorePath: ssl/keystore.p12  # Keystore file name in path
           keyStorePassword: "1234567" # Keystore password
-          keyPassword: # password for specific key in keystore if anny.
+          keyManagerPassword: # password for specific key in keystore if anny.
         outputBufferSize: 32768
         requestHeaderSize: 8192
         responseHeaderSize: 8192

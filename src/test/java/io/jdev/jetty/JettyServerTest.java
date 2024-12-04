@@ -55,45 +55,6 @@ class JettyServerTest extends SSLTest {
     jettyServer.join();
   }
 
-  @Test
-  void jettySSLYaml() throws Exception {
-    JettyProperties jettyProperties = YamlConfigurations.load(JettyProperties.class,
-        "/jetty_ssl.yaml");
-    jettyServer = new JettyServer(jettyProperties.getJettyServer(),
-        new TestHandler("test  message"));
-
-    jettyServer.start();
-
-    Awaitility.await()
-        .timeout(Duration.ofSeconds(2))
-        .pollDelay(Duration.ofSeconds(1))
-        .untilAsserted(() -> {
-          jettyServer.stop();
-        });
-
-    //blocking join until close is called.
-    jettyServer.join();
-  }
-
-  @Test
-  void jettySSLMultipleConnectorsYaml() throws Exception {
-    JettyProperties jettyProperties = YamlConfigurations.load(JettyProperties.class,
-        "/jetty_ssl_multiple_connectors.yaml");
-    jettyServer = new JettyServer(jettyProperties.getJettyServer(),
-        new TestHandler("test  message"));
-
-    jettyServer.start();
-
-    Awaitility.await()
-        .timeout(Duration.ofSeconds(2))
-        .pollDelay(Duration.ofSeconds(1))
-        .untilAsserted(() -> {
-          jettyServer.stop();
-        });
-
-    //blocking join until close is called.
-    jettyServer.join();
-  }
 
   @Test
   void jettyHttpVersionsYaml() throws Exception {
@@ -129,7 +90,12 @@ class JettyServerTest extends SSLTest {
         .GET()
         .version(Version.HTTP_2)
         .build();
-    HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+
+    HttpClient httpClient2 = HttpClient.newBuilder()
+        .version(HttpClient.Version.HTTP_2)
+        .build();
+    HttpResponse<String> response2 = httpClient2.send(request2,
+        HttpResponse.BodyHandlers.ofString());
     assertThat(response2.statusCode()).isEqualTo(200);
     assertThat(response2.version()).isEqualTo(Version.HTTP_2);
 
@@ -222,7 +188,12 @@ class JettyServerTest extends SSLTest {
         .GET()
         .version(Version.HTTP_2)
         .build();
-    HttpResponse<String> response2 = httpsClient.send(request2,
+
+    HttpClient httpClient2 = HttpClient.newBuilder()
+        .version(HttpClient.Version.HTTP_2)
+        .sslContext(sslContext)
+        .build();
+    HttpResponse<String> response2 = httpClient2.send(request2,
         HttpResponse.BodyHandlers.ofString());
     assertThat(response2.statusCode()).isEqualTo(404);
     assertThat(response2.version()).isEqualTo(Version.HTTP_2);
@@ -254,12 +225,13 @@ class JettyServerTest extends SSLTest {
     // Build the HttpClient with the custom SSLContext
     HttpClient httpsClient = HttpClient.newBuilder()
         .sslContext(sslContext)
+        .version(Version.HTTP_2)
         .build();
 
     String scheme = "https";
     String host = "127.0.0.1";
     int port = 8443;
-    String path = "";
+    String path = "/";
 
     // Create a https/1.1 request
     HttpRequest request = HttpRequest.newBuilder()
@@ -286,7 +258,6 @@ class JettyServerTest extends SSLTest {
   public class TestHandler extends Handler.Abstract {
 
     private final String message;
-
 
     @Override
     public boolean handle(Request request, Response response, Callback callback) throws Exception {

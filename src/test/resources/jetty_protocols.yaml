@@ -15,37 +15,38 @@ jettyServer:
   connectors:
     - name: first-connector
       host: 127.0.0.1
+      port: 8080
+      idleTimeout:
+        duration: 120
+        timeUnit: SECONDS
+      httpConfig:
+        type: http
+        version: "HTTP_1_1"
+        outputBufferSize: 32768
+        requestHeaderSize: 8192
+        responseHeaderSize: 8192
+    - name: second-connector
+      host: 127.0.0.1
       port: 8443
       idleTimeout:
         duration: 120
         timeUnit: SECONDS
       httpConfig:
         type: https
-        secureScheme: https
-        securePort: 8443
+        version: "HTTP_1_1"
         ssl:
           keyStorePath: ssl/keystore.p12  # Keystore file name in path
           keyStorePassword: "1234567" # Keystore password
           keyManagerPassword: # password for specific key in keystore if anny.
+          keyStoreType: JKS
+          keyStoreProvider: BC
+          trustStorePath: /path/to/ts_file
+          trustStorePassword: changeit
+          trustStoreType: JKS
+          trustStoreProvider: BC
         outputBufferSize: 32768
         requestHeaderSize: 8192
         responseHeaderSize: 8192
-    - name: second-connector
-      host: 127.0.0.1
-      port: 8444
-      idleTimeout:
-        duration: 120
-        timeUnit: SECONDS
-      httpConfig:
-        type: https
-        secureScheme: https
-        securePort: 8444
-        ssl:
-          keyStorePath: ssl/keystore.p12  # Keystore file name in path
-          keyStorePassword: "1234567" # Keystore password
-          keyManagerPassword: # password for specific key in keystore if anny.
-        outputBufferSize: 32768
-        requestHeaderSize: 8192
-        responseHeaderSize: 8192
+
 
 

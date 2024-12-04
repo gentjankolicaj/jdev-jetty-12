@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 @SuppressWarnings("all")
 class JettyPropertiesTest {
 
+
   @Test
   void jettyYamlTest() throws ConfigurationException {
     JettyProperties jettyProps = YamlConfigurations.load(JettyProperties.class, "/jetty.yaml");
@@ -46,57 +47,17 @@ class JettyPropertiesTest {
     assertThat(connectorProps.getIdleTimeout().duration()).isEqualTo(120);
 
     //http config
-    HttpProperties httpProperties = connectorProps.getHttp().get();
+    HttpProperties httpProperties = (HttpProperties) connectorProps.getHttpConfig().get();
     assertThat(httpProperties.getResponseHeaderSize().get()).isEqualTo(8192);
     assertThat(httpProperties.getRequestHeaderSize().get()).isEqualTo(8192);
     assertThat(httpProperties.getOutputBufferSize().get()).isEqualTo(32768);
   }
 
-  @Test
-  void jettySSLYamlTest() throws ConfigurationException {
-    JettyProperties jettyProps = YamlConfigurations.load(JettyProperties.class, "/jetty_ssl.yaml");
-    assertThat(jettyProps).isNotNull();
-    assertThat(jettyProps.getJettyServer()).isNotNull();
-
-    //Thread pool test
-    ThreadPoolProperties threadPoolProps = jettyProps.getJettyServer().getThreadPool();
-    assertThat(threadPoolProps).isNotNull();
-    assertThat(threadPoolProps.poolName()).isEqualTo("jetty-pool");
-    assertThat(threadPoolProps.daemonThreads()).isTrue();
-    assertThat(threadPoolProps.minThreads()).isEqualTo(4);
-    assertThat(threadPoolProps.maxThreads()).isEqualTo(50);
-    assertThat(threadPoolProps.reservedThreads()).isEqualTo(1);
-    assertThat(threadPoolProps.idleTimeout()).isEqualTo(10000);
-    assertThat(threadPoolProps.stopTimeout()).isEqualTo(10000);
-
-    List<ConnectorProperties> connectorPropsList = jettyProps.getJettyServer().getConnectors();
-    assertThat(connectorPropsList).isNotNull().hasSize(1);
-
-    //first connector properties
-    ConnectorProperties connectorProps = connectorPropsList.get(0);
-    assertThat(connectorProps).isNotNull();
-    assertThat(connectorProps.getName()).isEqualTo("first-connector");
-    assertThat(connectorProps.getHost()).isEqualTo("127.0.0.1");
-    assertThat(connectorProps.getPort()).isEqualTo(8443);
-    assertThat(connectorProps.getIdleTimeout()).isNotNull();
-    assertThat(connectorProps.getIdleTimeout().duration()).isEqualTo(120);
-
-    //http config
-    HttpProperties httpProperties = connectorProps.getHttp().get();
-    assertThat(httpProperties.getResponseHeaderSize().get()).isEqualTo(8192);
-    assertThat(httpProperties.getRequestHeaderSize().get()).isEqualTo(8192);
-    assertThat(httpProperties.getOutputBufferSize().get()).isEqualTo(32768);
-
-    SSLProperties sslProperties = httpProperties.getSsl().get();
-    assertThat(sslProperties).isNotNull();
-    assertThat(sslProperties.getKeyStoreFile()).isNotNull().isEqualTo("ssl/keystore.p12");
-    assertThat(sslProperties.getKeyStorePassword()).isNotNull().isEqualTo("1234567");
-  }
 
   @Test
   void jettyNoHttpYamlTest() throws ConfigurationException {
     JettyProperties jettyProps = YamlConfigurations.load(JettyProperties.class,
-        "/jetty_no_http.yaml");
+        "/jetty_no_protocol.yaml");
     assertThat(jettyProps).isNotNull();
     assertThat(jettyProps.getJettyServer()).isNotNull();
 
@@ -124,11 +85,10 @@ class JettyPropertiesTest {
     assertThat(connectorProps.getIdleTimeout().duration()).isEqualTo(120);
 
     //http config
-    Optional<HttpProperties> optional = connectorProps.getHttp();
+    Optional<HttpConfigProperties> optional = connectorProps.getHttpConfig();
     assertThat(optional).isEmpty();
 
   }
-
 
   @Test
   void jettySSLMultipleConnectorsYamlTest() throws ConfigurationException {
@@ -161,16 +121,16 @@ class JettyPropertiesTest {
     assertThat(connectorProps.getIdleTimeout().duration()).isEqualTo(120);
 
     //http config
-    HttpProperties httpProperties = connectorProps.getHttp().get();
-    assertThat(httpProperties.getResponseHeaderSize().get()).isEqualTo(8192);
-    assertThat(httpProperties.getRequestHeaderSize().get()).isEqualTo(8192);
-    assertThat(httpProperties.getOutputBufferSize().get()).isEqualTo(32768);
+    HttpsProperties httpsProperties = (HttpsProperties) connectorProps.getHttpConfig().get();
+    assertThat(httpsProperties.getResponseHeaderSize().get()).isEqualTo(8192);
+    assertThat(httpsProperties.getRequestHeaderSize().get()).isEqualTo(8192);
+    assertThat(httpsProperties.getOutputBufferSize().get()).isEqualTo(32768);
 
-    SSLProperties sslProperties = httpProperties.getSsl().get();
+    SSLProperties sslProperties = httpsProperties.getSsl().get();
     assertThat(sslProperties).isNotNull();
-    assertThat(sslProperties.getKeyStoreFile()).isNotNull().isEqualTo("ssl/keystore.p12");
+    assertThat(sslProperties.getKeyStorePath()).isNotNull().isEqualTo("ssl/keystore.p12");
     assertThat(sslProperties.getKeyStorePassword()).isNotNull().isEqualTo("1234567");
-    assertThat(sslProperties.getKeyPassword()).isNullOrEmpty();
+    assertThat(sslProperties.getKeyManagerPassword()).isNullOrEmpty();
 
     //second connector properties
     ConnectorProperties connectorProps2 = connectorPropsList.get(1);
@@ -182,17 +142,17 @@ class JettyPropertiesTest {
     assertThat(connectorProps2.getIdleTimeout().duration()).isEqualTo(120);
 
     //second http config properties
-    HttpProperties httpProperties2 = connectorProps2.getHttp().get();
-    assertThat(httpProperties2.getResponseHeaderSize().get()).isEqualTo(8192);
-    assertThat(httpProperties2.getRequestHeaderSize().get()).isEqualTo(8192);
-    assertThat(httpProperties2.getOutputBufferSize().get()).isEqualTo(32768);
+    HttpsProperties httpsProperties2 = (HttpsProperties) connectorProps2.getHttpConfig().get();
+    assertThat(httpsProperties2.getResponseHeaderSize().get()).isEqualTo(8192);
+    assertThat(httpsProperties2.getRequestHeaderSize().get()).isEqualTo(8192);
+    assertThat(httpsProperties2.getOutputBufferSize().get()).isEqualTo(32768);
 
     //second ssl properties
-    SSLProperties sslProperties2 = httpProperties2.getSsl().get();
+    SSLProperties sslProperties2 = httpsProperties2.getSsl().get();
     assertThat(sslProperties2).isNotNull();
-    assertThat(sslProperties2.getKeyStoreFile()).isNotNull().isEqualTo("ssl/keystore.p12");
+    assertThat(sslProperties2.getKeyStorePath()).isNotNull().isEqualTo("ssl/keystore.p12");
     assertThat(sslProperties2.getKeyStorePassword()).isNotNull().isEqualTo("1234567");
-    assertThat(sslProperties2.getKeyPassword()).isNullOrEmpty();
+    assertThat(sslProperties2.getKeyManagerPassword()).isNullOrEmpty();
   }
 
   @Test
@@ -226,7 +186,7 @@ class JettyPropertiesTest {
     assertThat(connectorProps.getIdleTimeout().duration()).isEqualTo(120);
 
     //first http config
-    HttpProperties httpProperties = connectorProps.getHttp().get();
+    HttpProperties httpProperties = (HttpProperties) connectorProps.getHttpConfig().get();
     assertThat(httpProperties.getResponseHeaderSize().get()).isEqualTo(8192);
     assertThat(httpProperties.getRequestHeaderSize().get()).isEqualTo(8192);
     assertThat(httpProperties.getOutputBufferSize().get()).isEqualTo(32768);
@@ -242,12 +202,72 @@ class JettyPropertiesTest {
     assertThat(connectorProps2.getIdleTimeout().duration()).isEqualTo(120);
 
     //second http config properties
-    HttpProperties httpProperties2 = connectorProps2.getHttp().get();
+    HttpProperties httpProperties2 = (HttpProperties) connectorProps2.getHttpConfig().get();
     assertThat(httpProperties2.getResponseHeaderSize().get()).isEqualTo(8192);
     assertThat(httpProperties2.getRequestHeaderSize().get()).isEqualTo(8192);
     assertThat(httpProperties2.getOutputBufferSize().get()).isEqualTo(32768);
     assertThat(httpProperties2.getVersion().get()).isEqualTo(HttpVersion.HTTP_2);
 
+  }
+
+
+  @Test
+  void jettyProtocolYamlTest() throws ConfigurationException {
+    JettyProperties jettyProps = YamlConfigurations.load(JettyProperties.class,
+        "/jetty_protocols.yaml");
+    assertThat(jettyProps).isNotNull();
+    assertThat(jettyProps.getJettyServer()).isNotNull();
+
+    //Thread pool test
+    ThreadPoolProperties threadPoolProps = jettyProps.getJettyServer().getThreadPool();
+    assertThat(threadPoolProps).isNotNull();
+    assertThat(threadPoolProps.poolName()).isEqualTo("jetty-pool");
+    assertThat(threadPoolProps.daemonThreads()).isTrue();
+    assertThat(threadPoolProps.minThreads()).isEqualTo(4);
+    assertThat(threadPoolProps.maxThreads()).isEqualTo(50);
+    assertThat(threadPoolProps.reservedThreads()).isEqualTo(1);
+    assertThat(threadPoolProps.idleTimeout()).isEqualTo(10000);
+    assertThat(threadPoolProps.stopTimeout()).isEqualTo(10000);
+
+    List<ConnectorProperties> connectorPropsList = jettyProps.getJettyServer().getConnectors();
+    assertThat(connectorPropsList).isNotNull().hasSize(2);
+
+    //first connector properties
+    ConnectorProperties connectorProps = connectorPropsList.get(0);
+    assertThat(connectorProps).isNotNull();
+    assertThat(connectorProps.getName()).isEqualTo("first-connector");
+    assertThat(connectorProps.getHost()).isEqualTo("127.0.0.1");
+    assertThat(connectorProps.getPort()).isEqualTo(8080);
+    assertThat(connectorProps.getIdleTimeout()).isNotNull();
+    assertThat(connectorProps.getIdleTimeout().duration()).isEqualTo(120);
+
+    //http config
+    HttpProperties httpProperties = (HttpProperties) connectorProps.getHttpConfig().get();
+    assertThat(httpProperties.getResponseHeaderSize().get()).isEqualTo(8192);
+    assertThat(httpProperties.getRequestHeaderSize().get()).isEqualTo(8192);
+    assertThat(httpProperties.getOutputBufferSize().get()).isEqualTo(32768);
+
+    //second connector properties
+    ConnectorProperties connectorProps2 = connectorPropsList.get(1);
+    assertThat(connectorProps2).isNotNull();
+    assertThat(connectorProps2.getName()).isEqualTo("second-connector");
+    assertThat(connectorProps2.getHost()).isEqualTo("127.0.0.1");
+    assertThat(connectorProps2.getPort()).isEqualTo(8443);
+    assertThat(connectorProps2.getIdleTimeout()).isNotNull();
+    assertThat(connectorProps2.getIdleTimeout().duration()).isEqualTo(120);
+
+    //second http config properties
+    HttpsProperties httpProperties2 = (HttpsProperties) connectorProps2.getHttpConfig().get();
+    assertThat(httpProperties2.getResponseHeaderSize().get()).isEqualTo(8192);
+    assertThat(httpProperties2.getRequestHeaderSize().get()).isEqualTo(8192);
+    assertThat(httpProperties2.getOutputBufferSize().get()).isEqualTo(32768);
+
+    //second ssl properties
+    SSLProperties sslProperties2 = httpProperties2.getSsl().get();
+    assertThat(sslProperties2).isNotNull();
+    assertThat(sslProperties2.getKeyStorePath()).isNotNull().isEqualTo("ssl/keystore.p12");
+    assertThat(sslProperties2.getKeyStorePassword()).isNotNull().isEqualTo("1234567");
+    assertThat(sslProperties2.getKeyManagerPassword()).isNullOrEmpty();
   }
 
 }

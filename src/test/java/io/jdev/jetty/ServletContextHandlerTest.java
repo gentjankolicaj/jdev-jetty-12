@@ -95,9 +95,14 @@ class ServletContextHandlerTest {
     HttpRequest request2 = HttpRequest.newBuilder()
         .uri(URI.create(String.format("%s://%s:%d%s", scheme, host, port, path)))
         .GET()
-        .version(Version.HTTP_2)
+        .version(HttpClient.Version.HTTP_2)
         .build();
-    HttpResponse<String> response2 = client.send(request2, HttpResponse.BodyHandlers.ofString());
+
+    HttpClient httpClient2 = HttpClient.newBuilder()
+        .version(HttpClient.Version.HTTP_2)
+        .build();
+    HttpResponse<String> response2 = httpClient2.send(request2,
+        HttpResponse.BodyHandlers.ofString());
     assertThat(response2.statusCode()).isEqualTo(404);
     assertThat(response2.version()).isEqualTo(Version.HTTP_2);
 

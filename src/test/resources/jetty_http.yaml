@@ -20,7 +20,8 @@ jettyServer:
       idleTimeout:
         duration: 120
         timeUnit: SECONDS
-      http:
+      httpConfig:
+        type: http
         version: "HTTP_1_1"
         outputBufferSize: 32768
         requestHeaderSize: 8192

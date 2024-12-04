@@ -78,7 +78,7 @@ public abstract class SSLTest {
       throws GeneralSecurityException, IOException {
     KeyStore keyStore = KeyStore.getInstance("PKCS12");
     URL url = Thread.currentThread().getContextClassLoader()
-        .getResource(sslProperties.getKeyStoreFile());
+        .getResource(sslProperties.getKeyStorePath());
 
     try (FileInputStream fis = new FileInputStream(url.getFile())) {
       keyStore.load(fis, sslProperties.getKeyStorePassword().toCharArray());
@@ -104,7 +104,7 @@ public abstract class SSLTest {
       throws GeneralSecurityException, IOException {
     KeyStore keyStore = KeyStore.getInstance("PKCS12");
     URL url = Thread.currentThread().getContextClassLoader()
-        .getResource(sslProperties.getKeyStoreFile());
+        .getResource(sslProperties.getKeyStorePath());
 
     try (FileInputStream fis = new FileInputStream(url.getFile())) {
       keyStore.load(fis, sslProperties.getKeyStorePassword().toCharArray());

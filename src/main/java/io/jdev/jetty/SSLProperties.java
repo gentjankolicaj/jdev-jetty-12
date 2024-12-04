@@ -1,5 +1,6 @@
 package io.jdev.jetty;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,10 +12,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SSLProperties {
 
-  protected String keyStoreFile;
+  protected String keyStorePath;
   protected String keyStorePassword;
-  protected String keyPassword;
+  protected String keyManagerPassword;
 
 }
