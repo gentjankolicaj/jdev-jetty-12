@@ -1,11 +1,10 @@
 package io.jdev.jetty;
 
-import java.security.Security;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.conscrypt.Conscrypt;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http2.server.HTTP2CServerConnectionFactory;
@@ -34,11 +33,6 @@ public final class JettyServerUtils {
   private JettyServerUtils() {
   }
 
-
-  static void configureTLS(SslContextFactory.Server sslContextFactory) {
-    // https://jetty.org/docs/jetty/12/programming-guide/server/http.html#connector-protocol-tls-conscrypt
-    Security.insertProviderAt(Conscrypt.newProvider(), 1);
-  }
 
 
   static Resource findKeyStore(String resourceName, ResourceFactory resourceFactory) {
@@ -169,20 +163,9 @@ public final class JettyServerUtils {
     ServerConnector connector;
     if (optionalSSL.isPresent()) {
       SSLProperties sslProperties = optionalSSL.get();
-      //KeyStore resource
-      Resource keyStoreResource = JettyServerUtils.findKeyStore(sslProperties.getKeyStorePath(),
-          ResourceFactory.of(server));
 
       // SSL Context Factory
-      SslContextFactory.Server sslContextFactory = new SslContextFactory.Server();
-      sslContextFactory.setKeyStoreResource(keyStoreResource);
-      sslContextFactory.setKeyStorePassword(sslProperties.getKeyStorePassword());
-      sslContextFactory.setKeyManagerPassword(sslProperties.getKeyManagerPassword());
-
-      //Configure TLS
-      //Because of java.lang.IllegalStateException: Connection rejected: No ALPN Processor
-      // for sun.security.ssl.SSLEngineImpl from [org.eclipse.jetty.alpn.conscrypt.server.ConscryptServerALPNProcessor@ce5a68e]
-      configureTLS(sslContextFactory);
+      SslContextFactory.Server sslContextFactory = createSSLContextFactory(server, sslProperties);
 
       //==========================================================================
       //when https version is not specified/unknown, http/1.1 & http/2 is default
@@ -268,6 +251,66 @@ public final class JettyServerUtils {
     httpProperties.getSendServerVersion().ifPresent(httpConfig::setSendServerVersion);
     httpProperties.getSendDateHeader().ifPresent(httpConfig::setSendDateHeader);
     return httpConfig;
+  }
+
+  private static SslContextFactory.Server createSSLContextFactory(Server server,
+      SSLProperties sslProperties) {
+    //Configure TLS
+    //Because of java.lang.IllegalStateException: Connection rejected: No ALPN Processor
+    // for sun.security.ssl.SSLEngineImpl from [org.eclipse.jetty.alpn.conscrypt.server.ConscryptServerALPNProcessor@ce5a68e]
+
+    //KeyStore resource
+    Resource keyStoreResource = JettyServerUtils.findKeyStore(sslProperties.getKeyStorePath(),
+        ResourceFactory.of(server));
+
+    // SSL Context Factory
+    SslContextFactory.Server factory = new SslContextFactory.Server();
+    factory.setKeyStoreResource(keyStoreResource);
+    factory.setKeyStorePassword(sslProperties.getKeyStorePassword());
+    factory.setKeyManagerPassword(sslProperties.getKeyManagerPassword());
+
+    if (sslProperties.getNeedClientAuth().isPresent()) {
+      factory.setNeedClientAuth(sslProperties.getNeedClientAuth().get());
+    }
+
+    if (sslProperties.getWantClientAuth().isPresent()) {
+      factory.setWantClientAuth(sslProperties.getWantClientAuth().get());
+    }
+
+    if (sslProperties.getCertAlias().isPresent()) {
+      factory.setCertAlias(sslProperties.getCertAlias().get());
+    }
+
+    if (sslProperties.getJceProvider().isPresent()) {
+      factory.setProvider(sslProperties.getJceProvider().get());
+    }
+
+    if (sslProperties.getValidateCerts().isPresent()) {
+      factory.setValidateCerts(sslProperties.getValidateCerts().get());
+    }
+    if (sslProperties.getValidatePeers().isPresent()) {
+      factory.setValidatePeerCerts(sslProperties.getValidatePeers().get());
+    }
+
+    if (CollectionUtils.isNotEmpty(sslProperties.getIncludedProtocols())) {
+      factory.setIncludeProtocols(sslProperties.getIncludedProtocols().toArray(new String[0]));
+    }
+
+    if (CollectionUtils.isNotEmpty(sslProperties.getExcludedProtocols())) {
+      factory.setExcludeProtocols(sslProperties.getExcludedProtocols().toArray(new String[0]));
+    }
+
+    if (CollectionUtils.isNotEmpty(sslProperties.getIncludedCipherSuites())) {
+      factory.setIncludeCipherSuites(
+          sslProperties.getIncludedCipherSuites().toArray(new String[0]));
+    }
+
+    if (CollectionUtils.isNotEmpty(sslProperties.getExcludedCipherSuites())) {
+      factory.setExcludeCipherSuites(
+          sslProperties.getExcludedCipherSuites().toArray(new String[0]));
+    }
+
+    return factory;
   }
 
 

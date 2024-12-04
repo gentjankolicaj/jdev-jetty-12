@@ -22,7 +22,7 @@ jettyServer:
         timeUnit: SECONDS
       httpConfig:
         type: http
-        version: "HTTP_1_1"
+        version: "HTTP_2"
         outputBufferSize: 32768
         requestHeaderSize: 8192
         responseHeaderSize: 8192

@@ -19,9 +19,8 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HttpsProperties extends HttpProperties {
 
-  protected Optional<SSLProperties> ssl = Optional.empty();
-  protected Optional<String> secureScheme = Optional.empty();
-  protected Optional<Integer> securePort = Optional.empty();
-
+  private Optional<SSLProperties> ssl = Optional.empty();
+  private Optional<String> secureScheme = Optional.empty();
+  private Optional<Integer> securePort = Optional.empty();
 
 }

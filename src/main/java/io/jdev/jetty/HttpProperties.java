@@ -20,12 +20,12 @@ import org.eclipse.jetty.http.HttpVersion;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HttpProperties extends HttpConfigProperties {
 
-  protected Optional<HttpVersion> version = Optional.empty();
-  protected Optional<Integer> responseHeaderSize = Optional.empty();
-  protected Optional<Integer> requestHeaderSize = Optional.empty();
-  protected Optional<Integer> outputBufferSize = Optional.empty();
-  protected Optional<Boolean> sendServerVersion = Optional.empty();
-  protected Optional<Boolean> sendDateHeader = Optional.empty();
+  private Optional<HttpVersion> version = Optional.empty();
+  private Optional<Integer> responseHeaderSize = Optional.empty();
+  private Optional<Integer> requestHeaderSize = Optional.empty();
+  private Optional<Integer> outputBufferSize = Optional.empty();
+  private Optional<Boolean> sendServerVersion = Optional.empty();
+  private Optional<Boolean> sendDateHeader = Optional.empty();
 
 
 }

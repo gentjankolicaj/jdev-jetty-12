@@ -27,6 +27,23 @@ jettyServer:
           keyStorePath: ssl/keystore.p12  # Keystore file name in path
           keyStorePassword: "1234567" # Keystore password
           keyManagerPassword: # password for specific key in keystore if anny.
+          needClientAuth: false
+          wantClientAuth: false
+          certAlias: "tomcat_alias"
+          jceProvider: Conscrypt
+          includedProtocols:
+            - TLSv1.1
+            - TLSv1.2
+          excludedProtocols:
+            - SSL.*
+            - TLSv1
+            - TLSv1.1
+          validateCerts: false
+          validatePeers: false
+          includedCipherSuites:
+            - ECDHE-RSA-AES128-GCM-SHA256
+            - ECDHE-ECDSA-AES128-GCM-SHA256
+          excludedCipherSuites: [ ]
         outputBufferSize: 32768
         requestHeaderSize: 8192
         responseHeaderSize: 8192
