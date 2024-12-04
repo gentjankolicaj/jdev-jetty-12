@@ -34,7 +34,6 @@ public final class JettyServerUtils {
   }
 
 
-
   static Resource findKeyStore(String resourceName, ResourceFactory resourceFactory) {
     Resource resource = resourceFactory.newClassLoaderResource(resourceName);
     if (!Resources.isReadableFile(resource)) {
@@ -255,9 +254,6 @@ public final class JettyServerUtils {
 
   private static SslContextFactory.Server createSSLContextFactory(Server server,
       SSLProperties sslProperties) {
-    //Configure TLS
-    //Because of java.lang.IllegalStateException: Connection rejected: No ALPN Processor
-    // for sun.security.ssl.SSLEngineImpl from [org.eclipse.jetty.alpn.conscrypt.server.ConscryptServerALPNProcessor@ce5a68e]
 
     //KeyStore resource
     Resource keyStoreResource = JettyServerUtils.findKeyStore(sslProperties.getKeyStorePath(),

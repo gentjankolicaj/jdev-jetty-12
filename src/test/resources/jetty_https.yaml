@@ -32,12 +32,11 @@ jettyServer:
           certAlias: "tomcat_alias"
           jceProvider: Conscrypt
           includedProtocols:
-            - TLSv1.1
-            - TLSv1.2
-          excludedProtocols:
             - SSL.*
             - TLSv1
             - TLSv1.1
+            - TLSv1.2
+          excludedProtocols: [ ]
           validateCerts: false
           validatePeers: false
           includedCipherSuites:
