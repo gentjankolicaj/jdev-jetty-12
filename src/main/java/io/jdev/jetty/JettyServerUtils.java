@@ -29,7 +29,6 @@ public final class JettyServerUtils {
 
   private static final long DEFAULT_TIMEOUT = TimeUnit.SECONDS.toMillis(5);
 
-
   private JettyServerUtils() {
   }
 
