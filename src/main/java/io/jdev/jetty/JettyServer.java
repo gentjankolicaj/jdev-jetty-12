@@ -56,7 +56,7 @@ public class JettyServer {
       throw new IllegalArgumentException("WebAppContexts can't be empty !");
     }
     this.contextHandlers = new ContextHandlerCollection();
-    Arrays.stream(webAppContexts).forEach(this.contextHandlers::addHandler);
+    this.contextHandlers.setHandlers(webAppContexts);
   }
 
   public JettyServer(JettyServerProperties serverProperties,
@@ -66,7 +66,7 @@ public class JettyServer {
       throw new IllegalArgumentException("ServletContextHandlers can't be empty !");
     }
     this.contextHandlers = new ContextHandlerCollection();
-    Arrays.stream(servletContextHandlers).forEach(this.contextHandlers::addHandler);
+    this.contextHandlers.setHandlers(servletContextHandlers);
   }
 
 
